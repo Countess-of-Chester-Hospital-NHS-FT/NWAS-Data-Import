@@ -23,6 +23,7 @@
 
 # Exclude output file types
 *.html
+*.txt
 
 # Jupyter Notebook
 .ipynb_checkpoints

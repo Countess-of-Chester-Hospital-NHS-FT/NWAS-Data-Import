@@ -17,7 +17,7 @@ existing_dates <-  DBI::dbGetQuery(db, "select * from InformationSandpitDB.Repor
   distinct(date_at_hospital)
 
 # List files in folder and put dates into a table
-input_folder <- "Input\\"
+input_folder <- "S:\\Finance & Performance\\IM&T\\BIReporting\\Urgent Care Division\\Regular Reports\\Ambulance Figures\\NWAS Daily MDS Extracts\\"
 
 file_names <- list.files(path = input_folder) |> 
   as_tibble() |>
@@ -173,12 +173,21 @@ joined_nwas <- ambulances_clean %>%
   filter(!is.na(encntr_id)) %>%
   select(1:40, match_type)
 
+ecds_clean_unjoined <- ecds_clean |>
+  filter(!encntr_id %in% joined_nwas$encntr_id)
+
 # vehicle id matches and check in within 30 mins of ambulance arriving at hospital
-joined2 <- ambulances_clean %>%
-  filter(!primary_key %in% joined_nwas$primary_key)%>%
-  left_join(ecds_clean, by = c('vehicle_callsign' = 'cleaned_vehicle_id')) %>%
-  filter(abs(int_length(interval(check_in_date_time, date_time_at_hospital))) <= 1800) %>%
-  mutate(match_type = 'vehicle_id/arrival_time') %>%
+joined2 <- ambulances_clean |>
+  filter(!primary_key %in% joined_nwas$primary_key) |>
+  left_join(ecds_clean_unjoined, by = c('vehicle_callsign' = 'cleaned_vehicle_id')) |>
+  mutate(timediff = abs(int_length(interval(check_in_date_time, date_time_at_hospital)))) |>
+  filter(timediff <= 1800) |>
+  group_by(primary_key) |>
+  arrange(timediff, .by_group = TRUE) |>
+  mutate(rn = row_number()) |>
+  ungroup() |>
+  filter(rn == 1) |>
+  mutate(match_type = 'vehicle_id/arrival_time') |>
   select(1:40, match_type)
 
 # the remaining ambulances

@@ -13,7 +13,6 @@ Note: No data are shared in this repository.
 ### Project Structure
 
 * nwas_import.R - This script imports and processes ambulance data from CSV files, checks for duplicates, and writes the cleaned data to a database.
-Under construction.
 
 ### Built with
 Requirements file under construction.

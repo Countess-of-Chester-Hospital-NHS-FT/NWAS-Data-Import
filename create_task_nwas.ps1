@@ -9,11 +9,11 @@ $WorkingDirectory = "C:\Users\Your Name\Desktop\NWAS-Data-Import" # The director
 $RArgs = "--vanilla `"$ScriptPath`""
 
 # 1. Create an Action: What to run
-$Action = New-ScheduledTaskAction -Execute $PythonPath -Argument "`"$ScriptPath`"" -WorkingDirectory $WorkingDirectory
+$Action = New-ScheduledTaskAction -Execute $RscriptPath -Argument "`"$ScriptPath`"" -WorkingDirectory $WorkingDirectory
 
 # 2. Create a Trigger: When to run (e.g., daily at 10:00 AM)
-$Trigger1 = New-ScheduledTaskTrigger -Daily -At "09:15 AM"
-$Trigger2 = New-ScheduledTaskTrigger -Daily -At "10:15 AM"
+$Trigger1 = New-ScheduledTaskTrigger -Daily -At "08:45 AM"
+$Trigger2 = New-ScheduledTaskTrigger -Daily -At "09:45 AM"
 $Triggers = @($Trigger1, $Trigger2)
 
 # 3. Create Task Settings: Additional configurations

@@ -2,8 +2,8 @@
 $TaskName = "Run NWAS Import"
 $Description = "Schedules the NWAS import script to run twice daily."
 $RscriptPath = "C:\Program Files\R\R-4.5.1\bin\Rscript.exe" # check this is where the relevant version of R is located
-$ScriptPath = "C:\Users\Your Name\Desktop\NWAS-Data\Script.R" # script path
-$WorkingDirectory = "C:\Users\Your Name\Desktop\NWAS-Data" # The directory where your script is located
+$ScriptPath = "C:\Users\Your Name\Desktop\NWAS-Data-Import\nwas_import.R" # script path
+$WorkingDirectory = "C:\Users\Your Name\Desktop\NWAS-Data-Import" # The directory where your script is located
 
 # Rscript options: --vanilla ensures a clean session (no .Rprofile, no saved workspace)
 $RArgs = "--vanilla `"$ScriptPath`""

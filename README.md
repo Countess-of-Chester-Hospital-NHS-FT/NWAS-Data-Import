@@ -13,6 +13,14 @@ Note: No data are shared in this repository.
 ### Project Structure
 
 * nwas_import.R - This script imports and processes ambulance data from CSV files, checks for duplicates, and writes the cleaned data to a database.
+* create_task_nwas.ps - This script sets up the task for running the script
+
+### How to use
+* Clone the repo to your desktop
+* Check you have all the required packages installed
+* Point the R script to the correct folder for data input
+* Edit the powershell script for your own user name
+* Run the powershell script to set up the recurring task
 
 ### Built with
 Requirements file under construction.

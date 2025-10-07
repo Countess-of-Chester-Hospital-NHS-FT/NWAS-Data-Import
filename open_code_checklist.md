@@ -12,7 +12,7 @@ Please use this checklist to document adherence to best practice for published p
 - [x] Is this project software as a medical device (see MHRA guidance)? **No**
 - [x] Who has responsibility for ongoing support, communications, resolution of issues for the code? @helenajr
 - [x] Has a responsible disclosure process for security issues been defined? **GitHub Issues**
-- [ ] Has semantic versioning been used? (**Optional**)
+- [x] Has semantic versioning been used? (**Optional**)
 - [ ] Are package dependencies and libaries documented with versions? (**Optional**)
 
 ### You do not release information that should remain closed

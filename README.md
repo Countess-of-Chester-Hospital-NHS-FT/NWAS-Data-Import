@@ -1,7 +1,7 @@
 # NWAS Data Import
 
 ### Status
-This project is currently work in progress
+This project is deployed and being maintained by @helenajr
 
 ### About the project
 This is an engineering project to map NWAS ambulance data to their matching attendances in our ED data. This enables waits in ambulances to be more thoroughly reported on and investigated.
@@ -19,6 +19,7 @@ Note: No data are shared in this repository.
 * Clone the repo to your desktop
 * Check you have all the required packages installed
 * Point the R script to the correct folder for data input
+If you want to schedule the script to run automatically:
 * Edit the powershell script for your own user name
 * Run the powershell script to set up the recurring task
 
@@ -26,7 +27,7 @@ Note: No data are shared in this repository.
 Requirements file under construction.
 
 ### Contributing
-Contributions and identification of issues are welcomed. For issues please raise an issue, or for general comment use discussions.
+Contributions and identification of issues are welcomed. For issues please raise a GitHub issue on this repo, or for general comment use discussions.
 If you have been able to repurpose the code for your own organisation or found the code in this repo helpful then please let us know in discussions.
 
 1. Fork the Project

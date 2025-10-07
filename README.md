@@ -6,7 +6,7 @@ This project is deployed and being maintained by @helenajr
 ### About the project
 This is an engineering project to map North West Ambulance Service (NWAS) ambulance data to their matching attendances in our ED data. This enables waits in ambulances to be more thoroughly reported on and investigated.
 
-NWAS data is sourced via their access controlled (commissioning portal)[https://nwasnhstrust.sharepoint.com/sites/NWASCommissionerPortal/SitePages/Home].
+NWAS data is sourced via their access controlled [commissioning portal](https://nwasnhstrust.sharepoint.com/sites/NWASCommissionerPortal/SitePages/Home).
 
 Note: No data are shared in this repository.
 
@@ -22,6 +22,11 @@ Note: No data are shared in this repository.
 If you want to schedule the script to run automatically:
 * Edit the powershell script for your own user name
 * Run the powershell script to set up the recurring task
+
+### Outputs
+Landing tables for the data are:
+`InformationSandpitDB.Reports.NWAS_Imports_stage`
+`InformationSandpitDB.Reports.NWAS_Imports`
 
 ### Built with
 Requirements file under construction.

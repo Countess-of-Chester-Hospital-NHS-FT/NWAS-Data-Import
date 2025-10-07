@@ -6,40 +6,27 @@ Please use this checklist to document adherence to best practice for published p
   
 ### you’re clear about who owns the code and how others can use it
 
-- [ ] Does your code have an appropriate licence and copyright notice?  (**Mandatory**)
-- [ ] Is there a README and does it document intended purpose? (**Mandatory**)
-- [ ] Is the README clear and concise? (**Optional** - use analytics unit template or [example](https://github.com/othneildrew/Best-README-Template/blob/master/BLANK_README.md))
-- [ ] Do you need to consider MHRA 'software as a medical device' guidance? (**Mandatory** - use [flowchart](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/999908/Software_flow_chart_Ed_1-08b-IVD.pdf))
-- [ ] Who has responsibility for ongoing support and communications for the code? (**Optional** Best practice to assign, else state the code is not maintained and when the last update was)
-- [ ] Has a responsible disclosure process for security issues been defined? (**Mandatory** - could use github issues)
-- [ ] Who will address identified issues and security concerns? (**Mandatory**. - assign monitoring of above disclosure process)
-- [ ] Has semantic versioning been used? (**Optional**) 
-- [ ] Have [contribution guidelines](https://github.com/alphagov/govuk-frontend/blob/master/CONTRIBUTING.md) or [PR style guides](https://github.com/alphagov/styleguides/blob/master/pull-requests.md) been included? (**Optional**)
+- [x] Does your code have an appropriate licence?
+- [x] Is there a README and does it document intended purpose?
+- [x] Is the README clear and concise?
+- [x] Is this project software as a medical device (see MHRA guidance)? **No**
+- [x] Who has responsibility for ongoing support, communications, resolution of issues for the code? @helenajr
+- [x] Has a responsible disclosure process for security issues been defined? **GitHub Issues**
+- [ ] Has semantic versioning been used? (**Optional**)
 - [ ] Are package dependencies and libaries documented with versions? (**Optional**)
-- [ ] Has the code been linked to any published outputs so others can easily link to the code? (**Optional**) 
 
 ### You do not release information that should remain closed
 
-- [ ] Does the code include any sensitive, personal, secret or top secret data/information? (**Mandatory**)
-- [ ] Does the code include any unreleased policy? (**Mandatory**)
-- [ ] Does the code include business sensitive algorithms (e.g. finance allocations)? (**Mandatory**)
-- [ ] Has written permission been obtained for any data stored from the data owner? (**Mandatory**)
-- [ ] Are owners of services which the code fulfils aware of the release? (**Mandatory**)
-- [ ] Are any data transfers conducted safely and securely? (**Mandatory**)
-- [ ] Are any credentials contained in the source code? (**Mandatory** - check in both current version and git history)
-- [ ] Are any secret keys contained in the source code? (**Mandatory** - check in both current version and git history)
-- [ ] Are any SQL server addresses or connection strings in the source code? (**Mandatory** - check in both current version and git history)
-- [ ] Are the commit messages informative? (**Optional**) 
-- [ ] Do the commit messages include any sensitive information (e.g. names)? (**Mandatory**)
-- [ ] Does the git history contain any sensitive information (e.g. at one time real data or credentials were in the code but have since been removed) (**Mandatory**)
-- [ ] Have notebook outputs been removed/checked for sensitive information? (**Mandatory** - check but some appropriate outputs maybe useful: [Example]( https://github.com/best-practice-and-impact/govcookiecutter/blob/main/%7B%7B%20cookiecutter.repo_name%20%7D%7D/.pre-commit-config.yaml))
+- [x] The code / commit messages / issues doesn't include any sensitive, personal, secret or top secret data/information?
+- [x] The code / commit messages / issues  doesn't include any unreleased policy? 
+- [x] The code / commit messages / issues  doesn't include business sensitive algorithms (e.g. finance allocations)? 
+- [x] Associated data transfers are conducted safely and securely? **Data only stored locally**
+- [x] There are no credentials (passwords/tokens) contained in the source code / commit messages / issues ? (check in both current version and git history)
+- [x] There are no SQL server addresses or connection strings in the source code / commit messages / issues ? **Servers referenced by pseudonymns**
+- [x] The git history doesn't contain any sensitive information (e.g. at one time real data or credentials were in the code but have since been removed) 
+- [x] Have notebook outputs been removed/checked for sensitive information? **No notebooks in this repo** 
 - [ ] Is configuration written as code and separated from analytical code? (**Optional**) 
-- [ ] have you checked any screenshots or figures in your outputs and documentation for information that shouldn't be released? (**Mandatory**)
-
-### You store it in a repository managed by your department (to make licensing/copyright clear)
-
-- [ ] Is the code version controlled using GIT or similar? (**Optional**)
-- [ ] Is the code stored in your organisational GitHub account? Is it the same organisation that funds the relevant staff time? (**Optional**)
+- [x] No sensitive information in any screenshots or figures in your outputs and documentation?
 
 ### Any third-party tools you use to host or manage your code follow the National Cyber Security Centre’s cloud security guidance
 

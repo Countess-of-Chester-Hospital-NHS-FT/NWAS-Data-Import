@@ -4,7 +4,7 @@
 This project is deployed and being maintained by @helenajr
 
 ### About the project
-This is an engineering project to map NWAS ambulance data to their matching attendances in our ED data. This enables waits in ambulances to be more thoroughly reported on and investigated.
+This is an engineering project to map North West Ambulance Service (NWAS) ambulance data to their matching attendances in our ED data. This enables waits in ambulances to be more thoroughly reported on and investigated.
 
 NWAS data is sourced via their access controlled (commissioning portal)[https://nwasnhstrust.sharepoint.com/sites/NWASCommissionerPortal/SitePages/Home].
 

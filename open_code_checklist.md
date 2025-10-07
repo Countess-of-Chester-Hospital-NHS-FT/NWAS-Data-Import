@@ -28,14 +28,10 @@ Please use this checklist to document adherence to best practice for published p
 - [ ] Is configuration written as code and separated from analytical code? (**Optional**) 
 - [x] No sensitive information in any screenshots or figures in your outputs and documentation?
 
-### Any third-party tools you use to host or manage your code follow the National Cyber Security Centre’s cloud security guidance
+### Cyber security
 
-- [ ] Are third party tools used within the code? (**Mandatory** check. Best practice is to keep an inventory)
-- [ ] If so do they adhere to the NCSC's [Cloud Security Principles](https://www.ncsc.gov.uk/collection/cloud-security/implementing-the-cloud-security-principles)? (**Mandatory**)
+- [x] Packages used have been assessed for cyber security risk? 
 
 ### An internal code review has been completed
 
-- [ ] Has a colleague reviewed the code for sensitive data content and security vulnerabilities? (**Mandatory** - Best practice is to record automated code quality and security tools used)
-- [ ] Has a code quality review been completed focussing on the end usability and clarity? (**Optional** - consider runing through the [example](https://best-practice-and-impact.github.io/qa-of-code-guidance/checklist_higher.html) or similar code quality checklist)
-- [ ] Has the code been assessed for its [level or RAP](https://github.com/NHSDigital/rap-community-of-practice/blob/main/what_is_RAP/levels_of_RAP.md)(Reproducible Analytical Pipeline)? (**Optional**)
-- [ ] Has the code undergone some level of testing.  The level of teting required will depend on the specific code and use-case but as minimum it should work in a fresh environment with arteficial data. (**Optional**)
+- [x] Has a colleague/copilot reviewed the code for sensitive data content and security vulnerabilities? **Copilot review**

@@ -1,5 +1,3 @@
-#Helooo Anna
-
 #import libraries 
 library(tidyverse)
 library(janitor)
@@ -10,9 +8,23 @@ cat(sprintf("Script started: %s\n", now()),
     file = "script_log.txt", 
     append = TRUE)
 
-################################### Detecting new files #################################################
+###################### Detecting new files & Checking Warehouse Has Updated #####
 # create the connection for your session
 db <- DBI::dbConnect(odbc::odbc(), "coch_p2")
+
+# check the ED attendances have updated (no warehouse failures)
+attend_count <-  DBI::dbGetQuery(db, "
+select count(*) [n]
+from CernerStaging.[BI].[ECDS_Attendances]
+where convert(date,CheckInDateTime) = dateadd(day, -1, convert(date,getdate()))
+                                 ")
+
+if (attend_count$n < 175) {
+  cat(sprintf("Script aborted due to possible issue with ecds_attendances - yesterday attends < 175: %s\n", now()), 
+      file = "script_log.txt", 
+      append = TRUE)
+  stop("Issue with ecds_attendances")
+}
 
 # read from the ambulances table and find all the dates currently in the ambulances table
 existing_dates <-  DBI::dbGetQuery(db, "select * from InformationSandpitDB.Reports.NWAS_Imports") %>%

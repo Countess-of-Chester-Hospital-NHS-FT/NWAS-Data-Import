@@ -101,6 +101,7 @@ ambulances_clean <- ambulances_to_import %>%
                                          as.POSIXct(date_at_hospital + days(1)) + time_vehicle_clear,
                                          missing = NA),
          vehicle_callsign = str_to_upper(vehicle_callsign),
+         nwas_call_number = as.character(nwas_call_number),
          primary_key = paste(nwas_call_number,"-",vehicle_callsign)) |>
   select(primary_key, everything())
 
@@ -147,7 +148,7 @@ ecds_clean <- ECDS %>%
            !is.na(conveying_ambulance_trust) |
            !is.na(conveying_ambulance_trust_code)) |>
   mutate(ambulance_id_original = ambulance_call_identifier,
-         cleaned_call_id = str_extract(ambulance_call_identifier, '\\d{4,8}'), #any run of 8 digits
+         cleaned_call_id = str_extract(ambulance_call_identifier, '\\d{4,8}'), #any run of 4-8 digits
          ambulance_call_identifier = if_else(!is.na(cleaned_call_id),
                                              str_remove(ambulance_call_identifier, cleaned_call_id),
                                              ambulance_call_identifier),
@@ -208,7 +209,7 @@ joined2 <- ambulances_clean |>
   left_join(ecds_clean_unjoined, by = c('vehicle_callsign' = 'cleaned_vehicle_id')) |>
   mutate(timediff = abs(int_length(interval(check_in_date_time, date_time_at_hospital)))) |>
   filter(timediff <= 1800) |>
-  group_by(primary_key) |>
+  group_by(primary_key) |> # if multiple attendances are matched, just the closest one 
   arrange(timediff, .by_group = TRUE) |>
   mutate(rn = row_number()) |>
   ungroup() |>
@@ -216,15 +217,64 @@ joined2 <- ambulances_clean |>
   mutate(match_type = 'vehicle_id/arrival_time') |>
   select(1:40, match_type)
 
+ecds_clean_unjoined <- ecds_clean |>
+  filter(!encntr_id %in% joined_nwas$encntr_id,
+         !encntr_id %in% joined2$encntr_id)
+
+# call id matches and check in within 30 mins of ambulance arriving at hospital
+joined3 <- ambulances_clean |>
+  filter(!primary_key %in% joined_nwas$primary_key,
+         !primary_key %in% joined2$primary_key) |>
+  left_join(ecds_clean_unjoined, by = c('nwas_call_number' = 'cleaned_call_id')) |>
+  mutate(timediff = abs(int_length(interval(check_in_date_time, date_time_at_hospital)))) |>
+  filter(timediff <= 1800) |>
+  group_by(nwas_call_number) |> # if multiple attendances are matched, just the closest one 
+  arrange(timediff, .by_group = TRUE) |>
+  mutate(rn = row_number()) |>
+  ungroup() |>
+  filter(rn == 1) |>
+  mutate(match_type = 'call_id/arrival_time') |>
+  select(1:40, match_type)
+
+ecds_clean_unjoined <- ecds_clean |>
+  filter(!encntr_id %in% joined_nwas$encntr_id,
+         !encntr_id %in% joined2$encntr_id,
+         !encntr_id %in% joined3$encntr_id,
+         conveying_ambulance_trust == "North West Ambulance Service NHS Trust")
+
+# join remaining ambulances on time alone
+joined4 <- ambulances_clean |>
+  filter(!primary_key %in% joined_nwas$primary_key,
+         !primary_key %in% joined2$primary_key,
+         !primary_key %in% joined3$primary_key) |>
+  cross_join(ecds_clean_unjoined) |>
+  mutate(timediff = abs(int_length(interval(check_in_date_time, date_time_at_hospital)))) |>
+  filter(timediff <= 1800) |>
+  group_by(primary_key) |> # de-duplicate step 1
+  arrange(timediff, .by_group = TRUE) |>
+  mutate(rn = row_number()) |>
+  ungroup() |>
+  filter(rn == 1) |>
+  group_by(encntr_id) |> # de-dupe step 2 - if the same encntr is closest match to 2 ambs
+  arrange(timediff, .by_group = TRUE) |>
+  mutate(rn = row_number()) |>
+  ungroup() |>
+  filter(rn == 1) |>
+  mutate(match_type = 'arrival time only') |>
+  select(1:40, match_type)
+
 # the remaining ambulances
 unjoined <- ambulances_clean %>%
   filter(!primary_key %in% joined_nwas$primary_key,
-         !primary_key %in% joined2$primary_key) %>%
+         !primary_key %in% joined2$primary_key,
+         !primary_key %in% joined3$primary_key,
+         !primary_key %in% joined4$primary_key
+         ) %>%
   mutate(encntr_id = NA,
          match_type = 'unmatched')
 
 # union those 3 tables together
-unioned_df <- bind_rows(joined_nwas, joined2, unjoined) %>%
+unioned_df <- bind_rows(joined_nwas, joined2, joined3, joined4, unjoined) %>%
   mutate(
         date_of_call = dmy(date_of_call),
          extract_from_date = dmy_hm(extract_from_date),

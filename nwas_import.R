@@ -37,6 +37,7 @@ file_names <- list.files(path = input_folder) |>
   as_tibble() |>
   mutate(date = ymd(str_remove(value, ".csv"))) |>
   filter(!date %in% existing_dates$date_at_hospital)
+  #filter(date %in% c(ymd("25-10-12"))) ### This line is for use in development
 
 files_to_read <- nrow(file_names)
 
@@ -145,11 +146,22 @@ ecds_clean <- ECDS %>%
            !is.na(ambulance_call_identifier) |
            !is.na(conveying_ambulance_trust) |
            !is.na(conveying_ambulance_trust_code)) |>
-  mutate(cleaned_call_id = str_extract(ambulance_call_identifier, '\\d{8}'), #any run of 8 digits
-         cleaned_call_id = as.numeric(cleaned_call_id),
+  mutate(ambulance_id_original = ambulance_call_identifier,
+         cleaned_call_id = str_extract(ambulance_call_identifier, '\\d{4,8}'), #any run of 8 digits
+         ambulance_call_identifier = if_else(!is.na(cleaned_call_id),
+                                             str_remove(ambulance_call_identifier, cleaned_call_id),
+                                             ambulance_call_identifier),
          ambulance_call_identifier = str_to_upper(ambulance_call_identifier),
          cleaned_vehicle_id = str_extract(ambulance_call_identifier, '[A-Z]+\\d{2,3}'), #any uppercase characters followed by 2 or 3 digits
-         ambulance_primary_key = paste(cleaned_call_id,"-",cleaned_vehicle_id))
+         ambulance_call_identifier = if_else(!is.na(cleaned_vehicle_id),
+                                             str_remove(ambulance_call_identifier, cleaned_vehicle_id),
+                                             ambulance_call_identifier),
+         cleaned_vehicle_id = if_else(str_detect(ambulance_call_identifier, '\\d{2,3}'),
+                                      paste0("A", str_extract(ambulance_call_identifier, '\\d{2,3}')),
+                                      cleaned_vehicle_id),
+         ambulance_primary_key = paste(cleaned_call_id,"-",cleaned_vehicle_id)) #|>
+  #select(ambulance_primary_key, ambulance_id_original, ambulance_call_identifier, cleaned_vehicle_id, cleaned_call_id) #|> # for development
+  #filter(ambulance_id_original == "742 , 31615878      ") # for development
 
 # flags duplicated primary keys - means they will not be joined to nwas data by prim key
 dupe_pk <- ecds_clean |> 
@@ -249,7 +261,7 @@ if (distinct_pk < total_rows) {
 }
 
 ############### Write data to the database #####################################
-#stop("Temp stop") - useful for debugging
+#stop("Temp stop") # for development
 
 # Connect to the database
 con <- dbConnect(odbc::odbc(), 

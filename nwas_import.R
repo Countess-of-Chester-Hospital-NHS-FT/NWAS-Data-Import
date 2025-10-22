@@ -161,7 +161,7 @@ ecds_clean <- ECDS %>%
                                       cleaned_vehicle_id),
          ambulance_primary_key = paste(cleaned_call_id,"-",cleaned_vehicle_id)) #|>
   #select(ambulance_primary_key, ambulance_id_original, ambulance_call_identifier, cleaned_vehicle_id, cleaned_call_id) #|> # for development
-  #filter(ambulance_id_original == "742 , 31615878      ") # for development
+  #filter(ambulance_id_original == "") # for development
 
 # flags duplicated primary keys - means they will not be joined to nwas data by prim key
 dupe_pk <- ecds_clean |> 

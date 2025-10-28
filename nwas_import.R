@@ -33,9 +33,12 @@ existing_dates <-  DBI::dbGetQuery(db, "select * from InformationSandpitDB.Repor
 # List files in folder and put dates into a table
 input_folder <- "S:\\Finance & Performance\\IM&T\\BIReporting\\Urgent Care Division\\Regular Reports\\Ambulance Figures\\NWAS Daily MDS Extracts\\"
 
+# input for testing
+#input_folder <- ".\\test_data"
+
 file_names <- list.files(path = input_folder) |> 
   as_tibble() |>
-  mutate(date = ymd(str_remove(value, ".csv"))) |>
+  mutate(date = ymd(str_sub(value, 1, 10))) |>
   filter(!date %in% existing_dates$date_at_hospital)
   #filter(date %in% c(ymd("25-10-12"))) ### This line is for use in development
 

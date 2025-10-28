@@ -415,6 +415,12 @@ WHEN NOT MATCHED THEN
 # Execute the merge SQL
 dbExecute(con, merge_sql)
 
+################## Backup whole import table to shared drive location ############
+nwas_imports_backup <-  DBI::dbGetQuery(db, "select * from InformationSandpitDB.Reports.NWAS_Imports")
+backup_path = "S:\\Finance & Performance\\IM&T\\BIReporting\\Data science projects\\NWAS Data Import - Importing Daily Row Level Data\\nwas_import_backup.RDS"
+saveRDS(nwas_imports_backup, file = backup_path)
+
+
 # Close the connection when finished
 dbDisconnect(con)
 

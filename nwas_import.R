@@ -87,6 +87,10 @@ if (ncol != 34) {
 
 ############## Wrangle the ambulance data ######################################
 
+# For investigating dupes
+dupes <- get_dupes(ambulances_to_import, nwas_call_number, vehicle_callsign) |>
+  filter(hospital_name == 'Countess of Chester')
+
 ambulances_clean <- ambulances_to_import %>% 
   filter(hospital_name == 'Countess of Chester') |>
   mutate(date_at_hospital = dmy(date_at_hospital),
@@ -106,16 +110,21 @@ ambulances_clean <- ambulances_to_import %>%
          vehicle_callsign = str_to_upper(vehicle_callsign),
          nwas_call_number = as.character(nwas_call_number),
          primary_key = paste(nwas_call_number,"-",vehicle_callsign)) |>
+  group_by(primary_key) |> # this section de-duplicates where nwas have duplicated pks
+  arrange(date_time_at_hospital, .by_group = TRUE) |>
+  mutate(rn = row_number()) |> 
+  ungroup() |>
+  filter(rn == 1) |>
+  select(-rn) |>
   select(primary_key, everything())
 
 total_rows <- nrow(ambulances_clean)
 distinct_pk <- ambulances_clean |> distinct(primary_key) |> nrow()
 
-if (total_rows != distinct_pk) {
-  cat(sprintf("Script aborted due to multiple ambulances in nwas data with same pk: %s\n", now()), 
+if (nrow(dupes) > 0) {
+  cat(sprintf("Warning: multiple ambulances in nwas data with same pk: %s\n", now()), 
       file = "script_log.txt", 
       append = TRUE)
-  stop("multiple ambulances in nwas data with same pk")
 }
 
 ############## Import and Wrangle the ED data ##############################################
@@ -415,14 +424,16 @@ WHEN NOT MATCHED THEN
 # Execute the merge SQL
 dbExecute(con, merge_sql)
 
+# Close the connection when finished
+dbDisconnect(con)
+
 ################## Backup whole import table to shared drive location ############
+db <- DBI::dbConnect(odbc::odbc(), "coch_p2")
 nwas_imports_backup <-  DBI::dbGetQuery(db, "select * from InformationSandpitDB.Reports.NWAS_Imports")
+DBI::dbDisconnect(db)
 backup_path = "S:\\Finance & Performance\\IM&T\\BIReporting\\Data science projects\\NWAS Data Import - Importing Daily Row Level Data\\nwas_import_backup.RDS"
 saveRDS(nwas_imports_backup, file = backup_path)
 
-
-# Close the connection when finished
-dbDisconnect(con)
 
 # Open file for appending and write the line
 cat(sprintf("Script ran successfully at: %s\n", now()), 

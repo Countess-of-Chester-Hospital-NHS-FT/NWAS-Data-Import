@@ -31,7 +31,10 @@ existing_dates <-  DBI::dbGetQuery(db, "select * from InformationSandpitDB.Repor
   distinct(date_at_hospital)
 
 # List files in folder and put dates into a table
-input_folder <- "S:\\Finance & Performance\\IM&T\\BIReporting\\Urgent Care Division\\Regular Reports\\Ambulance Figures\\NWAS Daily MDS Extracts\\"
+input_folder <- Sys.getenv("NWAS_FOLDER_PATH")
+if (input_folder == "") {
+  stop("NWAS_FOLDER_PATH environment variable not set!")
+}
 
 # input for testing
 #input_folder <- ".\\test_data"
@@ -431,7 +434,12 @@ dbDisconnect(con)
 db <- DBI::dbConnect(odbc::odbc(), "coch_p2")
 nwas_imports_backup <-  DBI::dbGetQuery(db, "select * from InformationSandpitDB.Reports.NWAS_Imports")
 DBI::dbDisconnect(db)
-backup_path = "S:\\Finance & Performance\\IM&T\\BIReporting\\Data science projects\\NWAS Data Import - Importing Daily Row Level Data\\nwas_import_backup.RDS"
+
+folder_path <- Sys.getenv("DS_FOLDER_PATH")
+if (folder_path == "") {
+  stop("DS_FOLDER_PATH environment variable not set!")
+}
+backup_path <- file.path(folder_path, "NWAS Data Import - Importing Daily Row Level Data", "nwas_import_backup.RDS")
 saveRDS(nwas_imports_backup, file = backup_path)
 
 

@@ -65,14 +65,14 @@ header_row <- "HOSPITAL_NAME CLINIC_ATTENDED NWAS_CALL_NUMBER"
 for (i in 1:files_to_read) {
   ###### Dynamically detect how many rows to skip ############
   filename <- file_names$value[i]
-  temp0 <- read_csv(paste0(input_folder,filename), col_names = F, n_max = 100) |>
+  temp0 <- read_csv((file.path(input_folder,filename)), col_names = F, n_max = 100) |>
     mutate(strc = str_c(X1,X2,X3, sep = " ")) |>
     select(strc, everything())
   
   rows_to_skip <- (which(temp0 %>% pull(strc) == header_row)) - 1
   
   ###### Read in the file
-  temp_df <- read_csv(paste0(input_folder,filename), skip = rows_to_skip) |>
+  temp_df <- read_csv((file.path(input_folder,filename)), skip = rows_to_skip) |>
     clean_names()
   
   ##### Union it with any other files

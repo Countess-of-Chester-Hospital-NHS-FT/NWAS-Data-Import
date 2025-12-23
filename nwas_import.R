@@ -1,7 +1,5 @@
 #import libraries 
-library(dplyr)
-library(lubridate)
-library(stringr)
+library(tidyverse)
 library(janitor)
 library(odbc)
 library(DBI)

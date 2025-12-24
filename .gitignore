@@ -9,6 +9,7 @@
 # Exclude the following directories 
 /data/
 /output/
+/test_data/
 
 # Exclude data file types
 *.doc

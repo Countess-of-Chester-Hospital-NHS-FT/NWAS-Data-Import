@@ -1,5 +1,8 @@
 #import libraries 
-library(tidyverse)
+library(dplyr)
+library(stringr)
+library(readr)
+library(lubridate)
 library(janitor)
 library(odbc)
 library(DBI)
@@ -43,7 +46,7 @@ file_names <- list.files(path = input_folder) |>
   as_tibble() |>
   mutate(date = ymd(str_sub(value, 1, 10))) |>
   filter(!date %in% existing_dates$date_at_hospital)
-  #filter(date %in% c(ymd("25-10-12"))) ### This line is for use in development
+  #filter(date %in% c(ymd("25-12-09"))) ### This line is for use in development
 
 files_to_read <- nrow(file_names)
 
@@ -154,6 +157,10 @@ ecds_sql <- str_glue("SELECT
 ECDS <- DBI::dbGetQuery(db, ecds_sql) |> 
   clean_names()
 
+existing_encntrs <-  DBI::dbGetQuery(db, str_glue("select encntr_id from InformationSandpitDB.Reports.NWAS_Imports
+                                          where
+                                          date_at_hospital between '{min_date}' and '{max_date}'"))
+
 DBI::dbDisconnect(db)
 
 # wrangle
@@ -162,6 +169,7 @@ ecds_clean <- ECDS %>%
            !is.na(ambulance_call_identifier) |
            !is.na(conveying_ambulance_trust) |
            !is.na(conveying_ambulance_trust_code)) |>
+  filter(!encntr_id %in% existing_encntrs$encntr_id) |> # not an encntr that has already been assigned
   mutate(ambulance_id_original = ambulance_call_identifier,
          cleaned_call_id = str_extract(ambulance_call_identifier, '\\d{4,8}'), #any run of 4-8 digits
          ambulance_call_identifier = if_else(!is.na(cleaned_call_id),

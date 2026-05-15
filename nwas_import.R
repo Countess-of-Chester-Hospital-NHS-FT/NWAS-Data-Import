@@ -447,7 +447,7 @@ folder_path <- Sys.getenv("DS_FOLDER_PATH")
 if (folder_path == "") {
   stop("DS_FOLDER_PATH environment variable not set!")
 }
-backup_path <- file.path(folder_path, "NWAS Data Import - Importing Daily Row Level Data", "nwas_import_backup.RDS")
+backup_path <- file.path(folder_path, "DO_16607 - NWAS Data Import - Importing Daily Row Level Data", "nwas_import_backup.RDS")
 saveRDS(nwas_imports_backup, file = backup_path)
 
 

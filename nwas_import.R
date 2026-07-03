@@ -162,9 +162,6 @@ existing_encntrs <-  DBI::dbGetQuery(db, str_glue("select encntr_id from Informa
                                           where
                                           date_at_hospital between '{min_date}' and '{max_date}'"))
 
-existing_encntrs <-  DBI::dbGetQuery(db, str_glue("select encntr_id from InformationSandpitDB.Reports.NWAS_Imports
-                                          where
-                                          date_at_hospital < '{min_date}'"))
 
 
 DBI::dbDisconnect(db)

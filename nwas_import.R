@@ -46,7 +46,7 @@ file_names <- list.files(path = input_folder) |>
   as_tibble() |>
   mutate(date = ymd(str_sub(value, 1, 10))) |>
   filter(!date %in% existing_dates$date_at_hospital)
-  #filter(date %in% c(ymd("25-12-09"))) ### This line is for use in development
+  #filter(date %in% c(ymd("26-07-01"))) ### This line is for use in development
 
 files_to_read <- nrow(file_names)
 
@@ -157,9 +157,15 @@ ecds_sql <- str_glue("SELECT
 ECDS <- DBI::dbGetQuery(db, ecds_sql) |> 
   clean_names()
 
+
 existing_encntrs <-  DBI::dbGetQuery(db, str_glue("select encntr_id from InformationSandpitDB.Reports.NWAS_Imports
                                           where
                                           date_at_hospital between '{min_date}' and '{max_date}'"))
+
+existing_encntrs <-  DBI::dbGetQuery(db, str_glue("select encntr_id from InformationSandpitDB.Reports.NWAS_Imports
+                                          where
+                                          date_at_hospital < '{min_date}'"))
+
 
 DBI::dbDisconnect(db)
 
@@ -233,6 +239,11 @@ joined2 <- ambulances_clean |>
   mutate(timediff = abs(int_length(interval(check_in_date_time, date_time_at_hospital)))) |>
   filter(timediff <= 1800) |>
   group_by(primary_key) |> # if multiple attendances are matched, just the closest one 
+  arrange(timediff, .by_group = TRUE) |>
+  mutate(rn = row_number()) |>
+  ungroup() |>
+  filter(rn == 1) |>
+  group_by(encntr_id) |> # if multiple ambulances are matched, just the closest one 
   arrange(timediff, .by_group = TRUE) |>
   mutate(rn = row_number()) |>
   ungroup() |>
@@ -315,11 +326,11 @@ if (nrow(ambulances_clean) != nrow(unioned_df)) {
 
 ### run check for duplicated encntr_ids / duplicated primary keys - write to log file, abort upload
 total_rows <- nrow(unioned_df)
-distinct_encntrids <- unioned_df %>% distinct(encntr_id) %>% nrow()
+dupe_encntrs <- unioned_df |> get_dupes(encntr_id) |> nrow()
 total_unjoined <- unjoined %>% nrow()
 distinct_pk <- unioned_df %>% distinct(primary_key) %>% nrow()
 
-if ((distinct_encntrids + total_unjoined) < total_rows) {
+if (dupe_encntrs != 0) {
   cat(sprintf("Script aborted due to the same encounter mapping to multiple ambulances: %s\n", now()), 
       file = "script_log.txt", 
       append = TRUE)

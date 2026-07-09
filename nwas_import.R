@@ -323,9 +323,10 @@ if (nrow(ambulances_clean) != nrow(unioned_df)) {
 
 ### run check for duplicated encntr_ids / duplicated primary keys - write to log file, abort upload
 total_rows <- nrow(unioned_df)
-dupe_encntrs <- unioned_df |> get_dupes(encntr_id) |> nrow()
+dupe_encntrs <- unioned_df |> filter(!is.na(encntr_id)) |> get_dupes(encntr_id) |> nrow()
 total_unjoined <- unjoined %>% nrow()
 distinct_pk <- unioned_df %>% distinct(primary_key) %>% nrow()
+
 
 if (dupe_encntrs != 0) {
   cat(sprintf("Script aborted due to the same encounter mapping to multiple ambulances: %s\n", now()), 
